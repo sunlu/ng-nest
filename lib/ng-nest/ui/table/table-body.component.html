@@ -36,7 +36,7 @@
     <td
       [style.width.px]="column.width"
       [style.flex]="column.width ? 'none' : column.flex"
-      [title]="row[column.id] ? row[column.id] : ''"
+      [title]="!row[column.id] ? '' : (column.render ? column.render(row,column.id): row[column.id])"
       [class.x-table-sticky]="table.getSticky(column)"
       [style.left.px]="column.left"
     >
@@ -49,7 +49,7 @@
         </ng-container>
         <ng-container *ngSwitchDefault>
           <ng-container *xOutlet="columnTpl[column.id]; context: { $column: column, $row: row }">
-            <div [innerHTML]="row[column.id]"></div>
+            <div [innerHTML]="column.render ? column.render(row,column.id): row[column.id]"></div>
           </ng-container>
         </ng-container>
       </ng-container>
