@@ -223,14 +223,6 @@ export interface XTableRow extends XId {
 }
 
 /**
- * @zh_CN 单元格内容
- * @en_US cell render
- */
-export interface XTableCellRender {
-  (row: XTableRow, id: any): any;
-}
-
-/**
  * @zh_CN 列参数
  * @en_US Column parameter
  */
@@ -275,11 +267,6 @@ export interface XTableColumn extends XIdentityProperty {
    * @en_US Bind row click selection event when type is checkbox
    */
   rowChecked?: boolean;
-  /**
-   * @zh_CN 单元格文字输出
-   * @en_US cell text render
-   */
-  render?: XTableCellRender;
   /**
    * @zh_CN 自定义属性
    * @en_US Custom attributes
