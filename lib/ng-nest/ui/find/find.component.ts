@@ -70,13 +70,17 @@ export class XFindComponent extends XFindProperty implements OnInit {
       (Array.isArray(this.treeData) && this.treeData.length > 0) || this.treeData instanceof Function || this.treeData instanceof Observable
     );
   }
-
+  
   get hasTreeTable() {
     return this.hasTable && this.hasTree;
   }
 
   get hasTreeMultiple() {
     return this.hasTree && !this.hasTreeTable && this.multiple;
+  }
+
+  get hasSearch() {
+    return this.search;
   }
 
   temp: any;
@@ -305,6 +309,24 @@ export class XFindComponent extends XFindProperty implements OnInit {
       this.treeActivatedId = node.id;
     }
     this.treeActivatedChange.emit(node);
+    this.cdr.detectChanges();
+  }
+
+  formSearch() {
+    if (!this.hasSearch)
+      return;
+
+    if (!this.tableQuery) this.tableQuery = {};
+    if (!this.tableQuery.filter) this.tableQuery.filter = [];
+
+    const field = this.tableQuery.filter.find(x => x.field == this.search.field);
+    if (field) {
+      field.value = this.search.value;
+    } else {
+      this.tableQuery.filter = [...this.tableQuery.filter, this.search];
+    }
+
+    this.tableCom.change(1);
     this.cdr.detectChanges();
   }
 

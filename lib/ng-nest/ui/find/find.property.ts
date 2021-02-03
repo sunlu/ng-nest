@@ -9,7 +9,8 @@ import {
   XNumber,
   XSort,
   XQuery,
-  XWithConfig
+  XWithConfig,
+  XFilter
 } from '@ng-nest/ui/core';
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { XTableColumn, XTableRow } from '@ng-nest/ui/table';
@@ -22,6 +23,15 @@ import { XTreeNode } from '@ng-nest/ui/tree';
  */
 export const XFindPrefix = 'x-find';
 const X_CONFIG_NAME = 'find';
+
+/**
+ * Find Search Form Option
+ * @selector x-find
+ * @decorator component
+ */
+export interface XFindSearchOption extends XFilter {
+  label: string;
+}
 
 /**
  * Find Property
@@ -204,6 +214,12 @@ export class XFindProperty extends XControlValueAccessor<any | any[]> implements
    * @en_US When the tree and the table exist at the same time, the tree node id corresponds to the attribute of the table, which is used to filter the table data
    */
   @Input() treeTableConnect: any;
+
+  /**
+ * @zh_CN 表格检索参数
+ * @en_US Table search parameters
+ */
+  @Input() search: XFindSearchOption;
 }
 
 /**
@@ -383,4 +399,9 @@ export interface XFindOption extends XFormOption {
    * @en_US When the tree and the table exist at the same time, the tree node id corresponds to the attribute of the table, which is used to filter the table data
    */
   treeTableConnect?: any;
+  /**
+  * @zh_CN 用来做表格数据过滤
+  * @en_US used to filter the table data
+  */
+  search?: XFindSearchOption;
 }
