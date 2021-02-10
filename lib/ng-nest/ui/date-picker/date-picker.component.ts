@@ -47,14 +47,15 @@ export class XDatePickerComponent extends XDatePickerProperty implements OnInit,
     } else if (XIsNumber(value)) {
       this.modelType = 'number';
       this.numberValue = value;
-    } else if(XIsString(value)) {
+    } else if (XIsString(value)) {
       this.modelType = 'string';
-      this.numberValue = (new Date(value)).getTime();
+      const valueTime = new Date(value).getTime();
+      this.numberValue = !isNaN(valueTime) ? valueTime : '';
     } else if (XIsEmpty(value)) {
       this.numberValue = '';
     }
     this.value = value;
-    this.setDisplayValue();
+    this.setDisplayValue(this.numberValue);
     this.valueChange.next(this.numberValue);
     this.cdr.detectChanges();
   }
@@ -100,7 +101,7 @@ export class XDatePickerComponent extends XDatePickerProperty implements OnInit,
   ngOnChanges(changes: SimpleChanges): void {
     if (XIsChange(changes.type)) {
       this.setFormat();
-      this.setDisplayValue();
+      this.setDisplayValue(this.numberValue);
     }
   }
 
@@ -114,8 +115,14 @@ export class XDatePickerComponent extends XDatePickerProperty implements OnInit,
       this.format = 'yyyy-MM-dd';
     } else if (this.type === 'year') {
       this.format = 'yyyy';
-    } else if ((this.type = 'month')) {
+    } else if (this.type === 'month') {
       this.format = 'yyyy-MM';
+    } else if (this.type === 'date-time') {
+      this.format = 'yyyy-MM-dd HH:mm:ss';
+    } else if (this.type === 'date-hour') {
+      this.format = 'yyyy-MM-dd HH';
+    } else if (this.type === 'date-minute') {
+      this.format = 'yyyy-MM-dd HH:mm';
     }
   }
 
@@ -193,6 +200,13 @@ export class XDatePickerComponent extends XDatePickerProperty implements OnInit,
       viewContainerRef: this.viewContainerRef,
       overlayConfig: config
     });
+    this.portal.overlayRef
+      ?.outsidePointerEvents()
+      .pipe(takeUntil(this._unSubject))
+      .subscribe(() => {
+        this.setDisplayValue(this.numberValue);
+        this.closePortal();
+      });
     this.setInstance();
   }
 
@@ -215,22 +229,27 @@ export class XDatePickerComponent extends XDatePickerProperty implements OnInit,
       positionChange: this.positionChange,
       closePortal: () => this.closePortal(),
       destroyPortal: () => this.destroyPortal(),
-      nodeEmit: (node: Date) => this.onNodeClick(node)
+      nodeEmit: (node: Date, sure = true) => this.onNodeClick(node, sure)
     });
     componentRef.changeDetectorRef.detectChanges();
   }
 
-  onNodeClick(date: Date) {
-    this.numberValue = date.getTime();
-    this.value = this.getValue();
-    this.setDisplayValue();
-    this.closePortal();
-    this.modelChange();
-    this.nodeEmit.emit(this.numberValue);
+  onNodeClick(date: Date, sure = true) {
+    if (sure) {
+      this.numberValue = date.getTime();
+      this.value = this.getValue();
+      this.setDisplayValue(this.numberValue);
+      this.closePortal();
+      this.modelChange();
+      this.nodeEmit.emit(this.numberValue);
+    } else {
+      this.setDisplayValue(date.getTime());
+      this.cdr.markForCheck();
+    }
   }
 
-  setDisplayValue() {
-    this.displayValue = this.datePipe.transform(this.numberValue, this.format);
+  setDisplayValue(dateNumber: number | string) {
+    this.displayValue = this.datePipe.transform(dateNumber, this.format);
   }
 
   setPlacement() {
