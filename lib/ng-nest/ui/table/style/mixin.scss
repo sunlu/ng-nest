@@ -166,10 +166,13 @@
     }
   }
   &-bordered {
+    > thead > tr > th {
+      text-align: center;
+    }
     > thead > tr > th,
     > tbody tr > td {
       border-right: $--x-border-base;
-      padding-left: $--x-font-size;
+      // padding-left: $--x-font-size;
       &:last-child {
         border-right: none;
       }
@@ -178,5 +181,5 @@
 }
 
 @mixin pagination {
-  padding-top: $--x-font-size;
+  padding-top: calc(#{$--x-font-size} / 2);
 }
