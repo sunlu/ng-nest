@@ -178,6 +178,13 @@
       }
     }
   }
+  &-cell-merge {
+    > thead tr,
+    > tbody tr {
+      display: grid;
+      grid-auto-flow: row;
+    }
+  }
 }
 
 @mixin pagination {
